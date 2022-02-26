@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd">
+	<flow name="add-customerFlow" doc:id="96d3e2cb-0e91-4e39-8fa4-6a239b0a97ad" >
+		<logger level="INFO" doc:name="Logger" doc:id="7e2c2933-3879-4c63-8fc7-a690a51021a2" message="entry logger: #[payload]"/>
+		<ee:transform doc:name="Transform Message" doc:id="52f215e9-af3d-4aa7-9d0c-43291f37b322" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/csv 
+---
+payload map ( payload01 , indexOfPayload01 ) -> {
+	"Client Key": payload01."Client Key" as Number,
+	" First Name": payload01."First Name",
+	" Middle Name": payload01."Middle Name",
+	" Last Name": payload01."Last Name",
+	" BirthDate": payload01.BirthDate,
+	" Height": payload01.Height,
+	" Weight": payload01.Weight,
+	" Billing Street": payload01."Billing Street",
+	" Billing City": payload01."Billing City",
+	" Billing State": payload01."Billing State",
+	" Billing Postal Code": payload01."Billing Postal code" as Number,
+	" Billing Country": payload01."Billing Country",
+	" Created Date": now() as String {format: "uuuuMMDD"}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<set-variable value='#[payload map ( payload01 , indexOfPayload01 ) -&gt; {&#10;	"Client Key": payload01."Client Key" as Number,}]' doc:name="Set Variable" doc:id="4bdd3919-689a-455d-b5a1-a4e2f771e4fd" variableName="random-key"/>
+		<logger level="INFO" doc:name="Logger" doc:id="7c640a91-5007-4487-b8e3-d622689480d9" message="#[payload]"/>
+		<file:write doc:name="Write" doc:id="a73d589b-6b00-420a-bcfe-dd014960c060" config-ref="File_Config" path="C:\work\mulesoft\project\customer-mgn\cleint-list.csv" mode="APPEND" />
+		<ee:transform doc:name="Transform Message" doc:id="32130b58-a072-4db2-853a-9efbab344531" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/csv
+---
+vars."random-key"]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

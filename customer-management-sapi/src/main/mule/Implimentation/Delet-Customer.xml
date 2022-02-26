@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd">
+	<file:config name="File_Config1" doc:name="File Config" doc:id="0119fa75-5fbf-458f-9861-6228caa65a38" timeBetweenSizeCheckUnit="SECONDS" >
+		<file:connection workingDir="C:\work\mulesoft\project\customer-mgn" />
+	</file:config>
+	<flow name="Delet-CustomerFlow" doc:id="a242b67c-0917-47dd-a57a-811d78edb94a" >
+		<logger level="INFO" doc:name="Logger" doc:id="e5d83f48-9aaf-40d0-b716-52cc49419271" message='#[attributes.queryParams."cleint key"]'/>
+		<file:delete doc:name="Delete" doc:id="d2587b5e-a255-4b30-bdbb-2cf059fe2a18" config-ref="File_Config" path="C:\work\mulesoft\project\customer-mgn"/>
+		<ee:transform doc:name="Transform Message" doc:id="d14c10e3-8a3c-4a38-ba7b-62f9be7beec7" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+  status: "success",
+  message: "succesgully deleted"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

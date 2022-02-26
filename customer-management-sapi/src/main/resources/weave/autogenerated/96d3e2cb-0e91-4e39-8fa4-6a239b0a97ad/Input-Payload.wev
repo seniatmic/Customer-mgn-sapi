@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_96d3e2cb_0e91_4e39_8fa4_6a239b0a97ad_Input_Payload = Array<{  "Billing Postal code": Number,   "Client Key": Number,   "Created Date": String,   "First Name": String,   "Middle Name"?: String,   "Billing Country": String,   Weight?: String,   "Billing Street"?: String,   "Billing City"?: String,   Height?: String,   "Last Name": String,   BirthDate: String,   "Billing State"?: String,   _?: Any}>
+
