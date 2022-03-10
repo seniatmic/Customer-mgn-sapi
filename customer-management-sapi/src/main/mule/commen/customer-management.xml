@@ -13,7 +13,7 @@ http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/fil
                 <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
             </http:error-response>
         </http:listener>
-        <apikit:router config-ref="customer-management-config" />
+        <apikit:router config-ref="customer-management-config" doc:id="30c8c567-1b22-420f-977d-1eb86cfffaa7"/>
     </flow>
     <flow name="delete:\Customer:customer-management-config">
 		<flow-ref doc:name="Flow Reference" doc:id="ded0431b-0550-4ecb-a392-336c7f7de422" name="Delet-CustomerFlow"/>

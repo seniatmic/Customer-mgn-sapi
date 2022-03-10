@@ -400,4 +400,20 @@ type cleintinput = Array<{|  "Client Key": String,   "First Name": String,   "Mi
       </types:output-event>
     </types:processor-declaration>
   </types:enrichment>
+  <types:enrichment select="#b38674bd-f90e-44b7-9c52-4e5d4d15d8cf">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="csv"/>
+        </types:message>
+      </types:input-event>
+      <types:output-event>
+        <types:message>
+          <types:payload type="csv"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#f004476b-711e-480b-b22e-0ffca399ef38"/>
+  <types:enrichment select="#715a85a9-6618-41da-9c26-ecbc5d1c0e40"/>
 </types:mule>

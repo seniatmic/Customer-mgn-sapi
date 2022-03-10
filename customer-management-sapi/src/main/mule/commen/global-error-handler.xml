@@ -5,89 +5,73 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
 	<error-handler name="global-errorError_Handler" doc:id="c87d9130-95e9-4f38-ae4f-ab455cede843" >
-		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="c8634f7d-efc0-49b6-b4c5-4968e20b2068" type="APIKIT:BAD_REQUEST" >
-			<ee:transform doc:name="Transform Message" doc:id="b766b1e0-0ca0-4ea5-a1e6-21046e29498c" >
-				<ee:message >
-					<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
----
-{status: "error",
- message:"Bad request"}]]></ee:set-payload>
-				</ee:message>
-				<ee:variables >
-					<ee:set-variable variableName="httpStatus" ><![CDATA[400]]></ee:set-variable>
-				</ee:variables>
-			</ee:transform>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="Copy_of_On Error Propagate" doc:id="57882c3d-f9d6-4018-b7dd-d2f55b52ffbb" type="MULE:CONNECTIVITY" >
+			<set-variable value="504" doc:name="Copy_of_Set 504" doc:id="fed7885d-87b4-4717-b7f8-12360d519282" variableName="httpStatus" />
+			<flow-ref doc:name="Copy_of_Flow Reference" doc:id="9060f072-9790-414d-9ad7-591a0cf4d980" name="Generate_Error_Response" />
 		</on-error-propagate>
-		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="fda968f4-3263-4c33-94ac-ee3e05e35422" type="APIKIT:NOT_FOUND" >
-			<ee:transform doc:name="Transform Message" doc:id="9218ee40-0c69-4e9b-b2f5-3acafb2e301d" >
-				<ee:message >
-					<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
----
-{status: "error",
- message:"Not-found"}]]></ee:set-payload>
-				</ee:message>
-				<ee:variables >
-					<ee:set-variable variableName="httpStatus" ><![CDATA[404]]></ee:set-variable>
-				</ee:variables>
-			</ee:transform>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="Copy_of_On Error Propagate" doc:id="cd4e1051-af88-40fa-b7e5-37281d2df72c" type="MULE:CLIENT_SECURITY" >
+			<set-variable value="500" doc:name="Copy_of_Set 500" doc:id="7c790fe4-6688-4622-aeac-389364f17493" variableName="httpStatus" />
+			<flow-ref doc:name="Copy_of_Flow Reference" doc:id="9ce231e7-94b9-4bc2-ab1f-4137cc028fa3" name="Generate_Error_Response" />
 		</on-error-propagate>
-		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="b50ced4a-6a10-4cfa-a125-c5e1fc39d70b" type="APIKIT:METHOD_NOT_ALLOWED" >
-			<ee:transform doc:name="Transform Message" doc:id="f0bb8fa0-6a29-4357-a752-6dd3ddd64291" >
-				<ee:message >
-					<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
----
-{status: "error",
- message:"Method-not-allowed"}]]></ee:set-payload>
-				</ee:message>
-				<ee:variables >
-					<ee:set-variable variableName="httpStatus" ><![CDATA[405]]></ee:set-variable>
-				</ee:variables>
-			</ee:transform>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="Copy_of_On Error Propagate" doc:id="8b7b260f-917a-4f3c-af32-dacb966f22c1" type="MULE:SERVER_SECURITY" >
+			<choice doc:name="Choice" doc:id="3b9046c1-9d18-47a7-b473-b37872d78129" >
+				<when expression="#[error.errorType.identifier=='UNAUTHORIZED']" >
+					<set-variable value=" 401" doc:name="Set 401" doc:id="34beb626-db2d-4591-949b-38eadbad4cdb" variableName="httpStatus" />
+				</when>
+				<otherwise >
+					<set-variable value="403" doc:name="Set 403" doc:id="36e68f0a-490d-4a36-813a-cbdbda3beb09" variableName="httpStatus" />
+				</otherwise>
+			</choice>
+			<flow-ref doc:name="Flow Reference" doc:id="44dcae21-54bd-48e3-9752-6fec8d06fc05" name="Generate_Error_Response" />
 		</on-error-propagate>
-		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="abb395b0-c87c-43c1-8519-334c689fc6a6" type="APIKIT:NOT_ACCEPTABLE" >
-			<ee:transform doc:name="Transform Message" doc:id="82b444d1-6f11-48c6-84a7-69e190fa82da" >
-				<ee:message >
-					<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
----
-{status: "error",
- message:"Not-acceplable"}]]></ee:set-payload>
-				</ee:message>
-				<ee:variables >
-					<ee:set-variable variableName="httpStatus" ><![CDATA[406]]></ee:set-variable>
-				</ee:variables>
-			</ee:transform>
-		</on-error-propagate>
-		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="d4ee651e-a438-4832-8e08-687ee1f7b804" type="APIKIT:UNSUPPORTED_MEDIA_TYPE" >
-			<ee:transform doc:name="Transform Message" doc:id="562db246-7166-4aef-96e8-ae982fca56cb" >
-				<ee:message >
-					<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
----
-{status: "error",
- message:"Unsupported-media-type"}]]></ee:set-payload>
-				</ee:message>
-				<ee:variables >
-					<ee:set-variable variableName="httpStatus" ><![CDATA[415]]></ee:set-variable>
-				</ee:variables>
-			</ee:transform>
-		</on-error-propagate>
-		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="1af5d6e2-05ee-4831-be0f-7938dc14a7ac" type="APIKIT:NOT_IMPLEMENTED" >
-			<ee:transform doc:name="Transform Message" doc:id="c6bbe576-3342-41dc-b276-5f64f5d55107" >
-				<ee:message >
-					<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
----
-{status: "error",
- message:"Not-Implemented"}]]></ee:set-payload>
-				</ee:message>
-				<ee:variables >
-					<ee:set-variable variableName="httpStatus" ><![CDATA[501]]></ee:set-variable>
-				</ee:variables>
-			</ee:transform>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="Copy_of_On Error Propagate" doc:id="8ce71104-935a-4ea1-bf8b-9f74022d09d0" type="ANY" >
+			<choice doc:name="_Choice" doc:id="c117286e-416f-42ed-9969-6b83b21f7e16" >
+				<when expression="#[error.errorType.namespace=='APIKIT']" >
+					<choice doc:name="Choice-inside" doc:id="d904a7cf-7338-4328-bb1d-80c3ac7aa44e" >
+						<when expression="#[error.errorType.identifier=='BAD_REQUEST']" >
+							<set-variable value="400" doc:name="set 400-bad-request" doc:id="5edd3177-989a-4a60-aae2-434cf203020a" variableName="httpStatus" />
+						</when>
+						<when expression="#[error.errorType.identifier=='NOT_FOUND']" >
+							<set-variable value="404" doc:name="set 404-not-found" doc:id="6e151ec1-d3a9-4a09-8c3b-1d23dc660600" variableName="httpStatus" />
+						</when>
+						<when expression="#[error.errorType.identifier=='METHOD_NOT_ALLOWED']" >
+							<set-variable value="405" doc:name="Set 405 tmethod_not_allowed" doc:id="9de13822-ead1-4bed-b58c-9e4ec7b55c65" variableName="httpStatus" />
+						</when>
+						<when expression="#[error.errorType.identifier=='NOT_ACCEPTABLE']" >
+							<set-variable value="406" doc:name="Set 406-not-acceptable" doc:id="0558c700-7fc0-4ed2-8b48-72792a675558" variableName="httpStatus" />
+						</when>
+						<when expression="#[error.errorType.identifier=='UNSUPPORTED_MEDIA_TYPE']" >
+							<set-variable value="415" doc:name="Set 415-unsupported-mediatype" doc:id="2a3007ad-c902-4c25-bd29-008b9ac5a59b" variableName="httpStatus" />
+						</when>
+						<when expression="#[error.errorType.identifier=='NOT_IMPLEMENTED']" >
+							<set-variable value="501" doc:name="Set 501-not-implemented" doc:id="e4240a64-408d-4022-85ee-5cf2f2d168eb" variableName="httpStatus" />
+						</when>
+						<otherwise >
+							<set-variable value="500" doc:name="Set 500" doc:id="de6b011b-eb0a-464a-a977-40c7a67bb844" variableName="httpStatus" />
+						</otherwise>
+					</choice>
+				</when>
+				<otherwise >
+					<set-variable doc:name="Set 404-file-not-found" doc:id="852899e9-deb6-4678-afae-af2146a3249b" variableName="httpStatus" value="404"/>
+				</otherwise>
+			</choice>
+			<flow-ref doc:name="Flow Reference" doc:id="8765bdc7-b13e-400a-aa49-6e497dd8451c" name="Generate_Error_Response" />
 		</on-error-propagate>
 	</error-handler>
+	<flow name="Generate_Error_Response" doc:id="493cb8f8-2d15-4d3b-8fa4-f5d172faa1b8" >
+		<ee:transform doc:name="Transform Message" doc:id="749fa42d-0371-4165-9ae7-888adb14a86e" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"code":vars.httpStatus,
+	"type":error.errorType.identifier,
+	"message":error.description
+	
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="43da6c1b-1899-4b9f-86bf-e0ac0d30c8e2" message='#[payload ++ {"status":"ERROR"}]' />
+	</flow>
 </mule>

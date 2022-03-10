@@ -16,11 +16,11 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
     </http:listener-config>
     <apikit:config name="customer-management-config" api="resource::8c4d8e96-bc67-4b0a-8624-0e65174b046a:customer-management-sapi:1.0.0:raml:zip:customer-management.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus"/>
 	<file:config name="File_Config" doc:name="File Config" doc:id="e9f5c635-606c-4038-873b-d62fa948df13" >
-		<file:connection workingDir="C:\work\mulesoft\project\customer-mgn" />
+		<file:connection workingDir="${fttp.workingdirectry}" />
 	</file:config>
 	<configuration doc:name="Configuration" doc:id="7116fe39-00c3-4248-9034-e028e2bc038d" defaultErrorHandler-ref="global-errorError_Handler" />
-	<configuration-properties doc:name="Configuration properties" doc:id="cc310adc-ba22-42be-a33c-a9be705186e9" file="Customer-PRD.yaml" />
-	<configuration-properties doc:name="Configuration properties" doc:id="b194d635-3ef2-41bd-b67e-da70b897f1bf" file="Customer-QA.yaml" />
+	<configuration-properties doc:name="Configuration properties" doc:id="cc310adc-ba22-42be-a33c-a9be705186e9" file="${env}.yaml" />
+	<global-property doc:name="Global Property" doc:id="a3907171-2714-46c9-bb30-0b311cf97f2f" name="env" value="Customer-PRD" />
 
  
 </mule>

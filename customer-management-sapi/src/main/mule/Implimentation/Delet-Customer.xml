@@ -10,15 +10,58 @@ http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/fil
 	</file:config>
 	<flow name="Delet-CustomerFlow" doc:id="a242b67c-0917-47dd-a57a-811d78edb94a" >
 		<logger level="INFO" doc:name="Logger" doc:id="e5d83f48-9aaf-40d0-b716-52cc49419271" message='#[attributes.queryParams."cleint key"]'/>
-		<file:delete doc:name="Delete" doc:id="d2587b5e-a255-4b30-bdbb-2cf059fe2a18" config-ref="File_Config" path="C:\work\mulesoft\project\customer-mgn"/>
+		<set-variable value='#[attributes.queryParams."cleint key"]' doc:name="cleint-key" doc:id="8902cd1b-1228-4a8d-b838-a97bded59d57" variableName="cleint-key"/>
+		<file:read doc:name="Read" doc:id="84967e53-d0c4-4aee-bd2b-b2e96c9d6b2e" config-ref="File_Config" path="${fttp.filepath}" outputMimeType="application/csv"/>
+		<ee:transform doc:name="Transform Message" doc:id="ce654570-62d3-4bd5-a229-5bb8ae66fb8b" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<set-variable value="#[sizeOf(payload)]" doc:name="size-of-orginal-payload" doc:id="9af55c89-57f5-498c-83fa-86997e92fac9" variableName="size" />
+		<ee:transform doc:name="Transform Message" doc:id="b38674bd-f90e-44b7-9c52-4e5d4d15d8cf" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/csv
+---
+payload filter($."Client Key" != vars."cleint-key") map ( payload01 , indexOfPayload01 )-> {
+	"Client Key": payload01."Client Key" ,
+	" First Name": payload01." First Name",
+	" Middle Name": payload01." Middle Name",
+	" Last Name": payload01." Last Name",
+	" BirthDate": payload01." BirthDate",
+	" Height": payload01." Height",
+	" Weight": payload01." Weight",
+	" Billing Street": payload01." Billing Street",
+	" Billing City": payload01." Billing City",
+	" Billing State": payload01." Billing State",
+	" Billing Postal Code": payload01." Billing Postal Code",
+	" Billing Country": payload01." Billing Country",
+	" Created Date": now()
+	
+	}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<set-variable value="#[sizeOf(payload)]" doc:name="size-of-filterd-payload" doc:id="46c95e77-9c1b-42d5-b872-0734daa2bb23" variableName="filter-size" />
+		<choice doc:name="Choice" doc:id="71a86455-b3c1-4cf7-87a8-be5fc9a08446" >
+			<when expression='#[vars.size != vars."filter-size"]'>
+				<logger level="INFO" doc:name="Logger" doc:id="debc1e30-555a-4099-910b-2bac0035908b" message="#[payload]" />
+				<file:write doc:name="Write" doc:id="577e83c7-febb-4836-9242-113e87c1ea4f" config-ref="File_Config" path="${fttp.filepath}"/>
+			</when>
+			<otherwise >
+				<logger level="INFO" doc:name="Logger" doc:id="c02df2c7-fcf9-4d43-9d11-c8b0f62930a7" message='"not found"'/>
+				<raise-error doc:name="Raise error" doc:id="d7f93c14-e195-48aa-ac1e-7fce15a35b95" type="CUSTOMER:NOT_FOUND" description="the customer is not in the list"/>
+			</otherwise>
+		</choice>
 		<ee:transform doc:name="Transform Message" doc:id="d14c10e3-8a3c-4a38-ba7b-62f9be7beec7" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
 ---
 {
-  status: "success",
-  message: "succesgully deleted"
+	"message":"deleted"
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>

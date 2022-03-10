@@ -7,11 +7,14 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd">
 	<flow name="fetch-customerFlow" doc:id="a4b2629c-89a8-43f9-9b0d-e583ad933a00" >
 		<logger level="INFO" doc:name="Logger" doc:id="90c2307a-82b8-4878-8cb9-bc227313840a" message="Entry logger"/>
-		<file:read doc:name="Read" doc:id="63548c73-ff62-4ec5-8141-fab53536148a" config-ref="File_Config" path="C:\work\mulesoft\project\customer-mgn\cleint-list.csv"/>
+		<file:read doc:name="Read" doc:id="63548c73-ff62-4ec5-8141-fab53536148a" config-ref="File_Config" path="${fttp.filepath}"/>
+		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="57601aee-550a-440b-b1a5-6f5305c828e4" mimeType="application/csv"/>
 		<logger level="INFO" doc:name="Logger" doc:id="b4cf7361-721a-4da3-bc6d-349356e3985a" message="#[payload]"/>
-		<ee:transform doc:name="Transform Message" doc:id="b0af2a6b-8bf5-49da-b0db-bb5e6a78979b" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
+		<choice doc:name="Choice" doc:id="860c67ce-b722-4559-a11a-72ce5961d28f" >
+			<when expression="#[sizeOf(payload)!=0]">
+				<ee:transform doc:name="Transform Message" doc:id="b0af2a6b-8bf5-49da-b0db-bb5e6a78979b">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
   
@@ -20,11 +23,11 @@ output application/json
 	"first name": payload01." First Name",
 	"middle name": payload01." Middle Name",
 	"last name": payload01." Last Name",
-	"birthdate": payload01." BirthDate",
+	"birthdate": payload01." BirthDate" as String as Date {format:"yyyyMMdd"} as String {format:"yyyy.MM.dd"},
 	"Height": payload01." Height",
 	"weight": payload01." Weight",
 	"billinga address": payload01." Billing Street" ++ payload01." Billing City" ++ " " ++ payload01." Billing State" ++ " " ++ payload01." Billing Postal Code" ++ " " ++ payload01." Billing Country",
-	"created date": payload01." Created Date" as String {format: "uuuu.MM.DD"}	
+	"created date": payload01." Created Date" as String as Date {format:"yyyyMMdd"} as String {format:"yyyy.MM.dd"}	
 	}
 	
 
@@ -34,35 +37,38 @@ output application/json
 ]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<ee:transform doc:name="Transform Message" doc:id="29588bf4-3d75-4595-90c7-ba3da3781c12">
-			<ee:message>
-				<ee:set-payload><![CDATA[%dw 2.0
+				<ee:transform doc:name="Transform Message" doc:id="12af5cc3-8ee7-4a61-9ff1-6d2d35b4fc8b" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
 ---
-{}]]></ee:set-payload>
-			</ee:message>
-			<ee:variables>
-				<ee:set-variable variableName="Total-records"><![CDATA[%dw 2.0
+payload]]></ee:set-payload>
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="size" ><![CDATA[%dw 2.0
 output application/json
 ---
 sizeOf(payload)]]></ee:set-variable>
-				<ee:set-variable variableName="lists" ><![CDATA[%dw 2.0
-output application/json
----
-payload]]></ee:set-variable>
-			</ee:variables>
-		</ee:transform>
+					</ee:variables>
+				</ee:transform>
+			</when>
+			<otherwise >
+				<logger level="INFO" doc:name="Logger" doc:id="1173a083-6f2a-4981-bd7c-164fe509571c" message="#[payload]"/>
+				<raise-error doc:name="Raise error" doc:id="4e6d875b-77fd-444a-a465-69f920331bbd" type="RECORD:NO_CUSCTOMER" description="No customer record found in the file"/>
+			</otherwise>
+		</choice>
 		<ee:transform doc:name="Transform Message" doc:id="2d359193-70a9-40b8-9e9d-7f11d50bd367" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
 ---
 {	
-    "Customer-list":vars.lists,
-	"Number-of-Customer":vars."Total-records"
+    "Customer-list":payload,
+	"Number-of-Customer":vars.size
 }
 ]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="a9bda650-09cd-47d4-9f9a-ed330b4faf13" message="#[payload]" />
 	</flow>
 </mule>

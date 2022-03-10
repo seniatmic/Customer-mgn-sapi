@@ -6,18 +6,34 @@
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
 http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd">
 	<flow name="add-customerFlow" doc:id="96d3e2cb-0e91-4e39-8fa4-6a239b0a97ad" >
-		<logger level="INFO" doc:name="Logger" doc:id="7e2c2933-3879-4c63-8fc7-a690a51021a2" message="entry logger: #[payload]"/>
-		<ee:transform doc:name="Transform Message" doc:id="52f215e9-af3d-4aa7-9d0c-43291f37b322" >
+		<logger level="INFO" doc:name="Logger" doc:id="7e2c2933-3879-4c63-8fc7-a690a51021a2" message='"entry logger:"  #[payload]'/>
+		<ee:transform doc:name="Transform Message" doc:id="3d8b3671-6843-4b47-bef0-e74626a215ee" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
-output application/csv 
+output application/java
+---
+payload
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<set-variable value='#[payload map ( payload01 , indexOfPayload01 ) -&gt; {&#10;	"Client Key": payload01."Client Key" as Number }]' doc:name="randem-key" doc:id="737eb46f-4e42-474d-bec6-fc14cdca7de3" variableName="randem-key"/>
+		<set-variable value="#[payload]" doc:name="addpayload" doc:id="dff9633a-debf-4fee-bc86-10508af0da23" variableName="addpayload"/>
+		<file:read doc:name="Read" doc:id="b7e6e0d2-c2b5-4e33-ae6b-0558f1696f5f" config-ref="File_Config" path="${fttp.filepath}"/>
+		<logger level="INFO" doc:name="Logger" doc:id="627c14e0-4142-4262-8f31-231af0cb9549" message="#[sizeOf(payload)]"/>
+		<choice doc:name="Choice" doc:id="7f2f9068-b541-484d-9ea6-3310996108db" >
+			<when expression="#[sizeOf(payload)==0]">
+				<set-payload value="#[vars.addpayload]" doc:name="Set Payload" doc:id="8094ba61-9af5-4ca0-9d82-7eba12d88bab" />
+				<ee:transform doc:name="Transform Message" doc:id="52f215e9-af3d-4aa7-9d0c-43291f37b322">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/csv header=true
 ---
 payload map ( payload01 , indexOfPayload01 ) -> {
 	"Client Key": payload01."Client Key" as Number,
 	" First Name": payload01."First Name",
 	" Middle Name": payload01."Middle Name",
 	" Last Name": payload01."Last Name",
-	" BirthDate": payload01.BirthDate,
+	" BirthDate": payload01."BirthDate" as Date {format:"yyyy/MM/dd"} as String {format:"yyyyMMdd"} as Number {class: "java.lang.Long"}  , 
 	" Height": payload01.Height,
 	" Weight": payload01.Weight,
 	" Billing Street": payload01."Billing Street",
@@ -25,19 +41,45 @@ payload map ( payload01 , indexOfPayload01 ) -> {
 	" Billing State": payload01."Billing State",
 	" Billing Postal Code": payload01."Billing Postal code" as Number,
 	" Billing Country": payload01."Billing Country",
-	" Created Date": now() as String {format: "uuuuMMDD"}
+	" Created Date": now() as Date {format:"yyyy-MM-dd"}  as String {format:"yyyyMMdd"} as Number {class: "java.lang.Long"}
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<set-variable value='#[payload map ( payload01 , indexOfPayload01 ) -&gt; {&#10;	"Client Key": payload01."Client Key" as Number,}]' doc:name="Set Variable" doc:id="4bdd3919-689a-455d-b5a1-a4e2f771e4fd" variableName="random-key"/>
-		<logger level="INFO" doc:name="Logger" doc:id="7c640a91-5007-4487-b8e3-d622689480d9" message="#[payload]"/>
-		<file:write doc:name="Write" doc:id="a73d589b-6b00-420a-bcfe-dd014960c060" config-ref="File_Config" path="C:\work\mulesoft\project\customer-mgn\cleint-list.csv" mode="APPEND" />
+			</when>
+			<otherwise>
+				<set-payload value="#[vars.addpayload]" doc:name="Set Payload" doc:id="f536447b-1dc3-42f2-a352-be231807c05e" />
+				<ee:transform doc:name="Transform Message" doc:id="562f1135-74bb-4ba6-9fa9-c2b279be05a4" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/csv header=false
+---
+payload map ( payload01 , indexOfPayload01 ) -> {
+	"Client Key": payload01."Client Key" as Number,
+	" First Name": payload01."First Name",
+	" Middle Name": payload01."Middle Name",
+	" Last Name": payload01."Last Name",
+	" BirthDate": payload01."BirthDate" as Date {format:"yyyy/MM/dd"} as String {format:"yyyyMMdd"} as Number  , 
+	" Height": payload01.Height,
+	" Weight": payload01.Weight,
+	" Billing Street": payload01."Billing Street",
+	" Billing City": payload01."Billing City",
+	" Billing State": payload01."Billing State",
+	" Billing Postal Code": payload01."Billing Postal code" as Number,
+	" Billing Country": payload01."Billing Country",
+	" Created Date": now() as Date {format:"yyyy-MM-dd"}  as String {format:"yyyyMMdd"} as Number {class: "java.lang.Long"}
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="Logger" doc:id="96dd1f48-4c96-48ed-ae21-289ce6c264f9" message='"payload before created:" #[payload]'/>
+		<file:write doc:name="Write" doc:id="a73d589b-6b00-420a-bcfe-dd014960c060" config-ref="File_Config" path="${fttp.filepath}" mode="APPEND" />
 		<ee:transform doc:name="Transform Message" doc:id="32130b58-a072-4db2-853a-9efbab344531" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/csv
 ---
-vars."random-key"]]></ee:set-payload>
+vars."randem-key"]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
 	</flow>
