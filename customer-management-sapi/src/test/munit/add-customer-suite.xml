@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="add-customer-suite.xml" />
+	<munit:test name="add-customerFlow-test-1" doc:id="b7738ea5-b538-4ced-b243-dd17aa3d11bd" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock Read" doc:id="0458a288-4dfe-46a5-a1f1-4c8e39113527" processor="file:read">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="b7e6e0d2-c2b5-4e33-ae6b-0558f1696f5f" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output text/plain --- readUrl('classpath://addcustomerFlowtest1\mock_payload.dwl')]" mediaType="text/plain" encoding="UTF-8" />
+					<munit-tools:attributes value="#[readUrl('classpath://addcustomerFlowtest1\mock_attributes.dwl')]" />
+					<munit-tools:variables >
+						<munit-tools:variable key="outboundHeaders" value="#[readUrl('classpath://addcustomerFlowtest1\mock_variable_.dwl')]" />
+						<munit-tools:variable key="randem-key" value="#[output application/java --- readUrl('classpath://addcustomerFlowtest1\mock_variable_1.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="addpayload" value="#[output application/java --- readUrl('classpath://addcustomerFlowtest1\mock_variable_2.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit:set-event doc:name="Set Input" doc:id="88283726-339f-41b0-bb68-dac84f6031b5" >
+				<munit:payload value="#[output application/json --- readUrl('classpath://addcustomerFlowtest1\set-event_payload.dwl')]" encoding="UTF-8" mediaType="application/json" />
+				<munit:attributes value="#[readUrl('classpath://addcustomerFlowtest1\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://addcustomerFlowtest1\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to add-customerFlow" doc:id="ccdaf53d-f4e1-4ce2-adc1-1f15296f2267" name="add-customerFlow"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="7f345e24-cf9c-4d05-a4d3-75de93ff01fe" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import addcustomerFlowtest1::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="add-customerFlow-test-headertrue" doc:id="a5e6917e-4070-49de-9733-b1be8e96283c" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock Read" doc:id="39915839-dbc3-4aae-95a6-d63797bb25cd" processor="file:read">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="b7e6e0d2-c2b5-4e33-ae6b-0558f1696f5f" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output text/plain --- readUrl('classpath://addcustomerFlowtestheadertrue\mock_payload.dwl')]" mediaType="text/plain" encoding="UTF-8" />
+					<munit-tools:attributes value="#[readUrl('classpath://addcustomerFlowtestheadertrue\mock_attributes.dwl')]" />
+					<munit-tools:variables >
+						<munit-tools:variable key="outboundHeaders" value="#[readUrl('classpath://addcustomerFlowtestheadertrue\mock_variable_.dwl')]" />
+						<munit-tools:variable key="randem-key" value="#[output application/java --- readUrl('classpath://addcustomerFlowtestheadertrue\mock_variable_1.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="addpayload" value="#[output application/java --- readUrl('classpath://addcustomerFlowtestheadertrue\mock_variable_2.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit:set-event doc:name="Set Input" doc:id="9782e149-6ae4-41c1-9ac6-29c2eeaa6693" >
+				<munit:payload value="#[output application/json --- readUrl('classpath://addcustomerFlowtestheadertrue\set-event_payload.dwl')]" encoding="UTF-8" mediaType="application/json" />
+				<munit:attributes value="#[readUrl('classpath://addcustomerFlowtestheadertrue\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://addcustomerFlowtestheadertrue\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to add-customerFlow" doc:id="c584339e-7578-470b-bf53-2ff635d4291a" name="add-customerFlow"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="4a7bff72-4977-43eb-bbb8-b90b1ee8f615" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import addcustomerFlowtestheadertrue::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+
+
+</mule>

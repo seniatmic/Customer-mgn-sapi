@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="fetch-customer-test-suite.xml" />
+	<munit:test name="fetch-customer-test-suite-fetch-customerFlowTest-succese" doc:id="146705cc-da0a-49a3-a8c6-c219cea4dfc9" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="64304e75-5163-49e6-9b01-9974e29fffcb" processor="file:read">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="63548c73-ff62-4ec5-8141-fab53536148a" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output text/plain --- readUrl('classpath://fetchcustomerFlowtestsuccese\mock_payload.dwl')]" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Copy_of_Set Input" doc:id="08711c38-0754-4465-8e42-b31ab7652678">
+				<munit:payload value="#[readUrl('classpath://fetchcustomerFlowtestsuccese\set-event_payload.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://fetchcustomerFlowtestsuccese\set-event_attributes.dwl')]" />
+				<munit:variables>
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://fetchcustomerFlowtestsuccese\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to fetch-customerFlow" doc:id="bc0ab142-2190-4f46-85b2-f7b863bb9b47" name="fetch-customerFlow"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Copy_of_Assert payload" doc:id="823c85a7-1bd6-4045-b369-f4fb2b67844a" message="The payload does not match" >
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import fetchcustomerFlowtestsuccese::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="fetch-customer-test-suite-fetch-customerFlowTest-error" doc:id="6634c566-69b8-4ff0-9e23-06cc7cb1b2a6" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="4f37a1e5-fa6e-4262-9caf-427a65a0e959" processor="file:read">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="63548c73-ff62-4ec5-8141-fab53536148a" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="RECORD:NO_CUSCTOMER" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution>
+			<munit:set-event doc:name="Set Input" doc:id="8e8c767b-6ad7-4063-8516-d9e46b85f706">
+				<munit:payload value="#[readUrl('classpath://fetchcustomerFlowtestsuccese\set-event_payload.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://fetchcustomerFlowtestsuccese\set-event_attributes.dwl')]" />
+				<munit:variables>
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://fetchcustomerFlowtestsuccese\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+			<try doc:name="Try" doc:id="22fdc462-be5a-4600-b709-3402bd1157d4" >
+				<flow-ref doc:name="Flow-ref to customer-management-main" doc:id="12d4dcd2-cba5-41a9-8049-ec89c75f2cff" name="customer-management-main" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="aa7406cf-f3ba-438c-8b3f-35469a6bafd5" >
+						<logger level="INFO" doc:name="Logger" doc:id="23ac568f-72c1-44a0-8553-a61db04dab3e" message='"continue"' />
+					</on-error-continue>
+				</error-handler>
+			</try>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="8963f071-861d-48b6-8493-cf05f8664362" expression="#[payload.error]" is="#[MunitTools::equalTo(error.description)]" />
+		</munit:validation>
+	</munit:test>
+
+
+</mule>

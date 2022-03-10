@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="Delet-Customer-suite.xml" />
+	<munit:test name="Delet-CustomerFlow-test-succese" doc:id="15325dbc-a8a0-4b02-9ea0-dfc7f8d7dcc0" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock Read" doc:id="177054e9-8bfb-496d-8293-97ec1bdf5e7f" processor="file:read">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="84967e53-d0c4-4aee-bd2b-b2e96c9d6b2e" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/csv --- readUrl('classpath://DeletCustomerFlowtestsuccese\mock_payload.dwl')]" mediaType="application/csv" encoding="UTF-8" />
+					<munit-tools:attributes value="#[readUrl('classpath://DeletCustomerFlowtestsuccese\mock_attributes.dwl')]" />
+					<munit-tools:variables >
+						<munit-tools:variable key="outboundHeaders" value="#[readUrl('classpath://DeletCustomerFlowtestsuccese\mock_variable_.dwl')]" />
+						<munit-tools:variable key="cleint-key" value="#[output application/java --- readUrl('classpath://DeletCustomerFlowtestsuccese\mock_variable_1.dwl')]" mediaType="application/java" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit:set-event doc:name="Set Input" doc:id="f319a84d-0151-4196-b678-0824c95f6fc5" >
+				<munit:payload value="#[readUrl('classpath://DeletCustomerFlowtestsuccese\set-event_payload.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://DeletCustomerFlowtestsuccese\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://DeletCustomerFlowtestsuccese\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to Delet-CustomerFlow" doc:id="c073729c-ad46-49cb-ab9a-5036cb8556da" name="Delet-CustomerFlow"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="8613a4cd-207c-4e98-80e1-75e522cb3f00" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import DeletCustomerFlowtestsuccese::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="delete-customer-test-suite-fetch-customerFlowTest-error" doc:id="c7a85d6c-f32d-4e6c-918c-1bb6324f887f" description="Test">
+			<munit:behavior>
+				<munit-tools:mock-when doc:name="Mock when" doc:id="175ba120-3ced-4998-91d9-db31782fe710" processor="file:read">
+					<munit-tools:with-attributes>
+						<munit-tools:with-attribute whereValue="63548c73-ff62-4ec5-8141-fab53536148a" attributeName="doc:id" />
+					</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="CUSTOMER:NOT_FOUND" />
+				</munit-tools:then-return>
+				</munit-tools:mock-when>
+			</munit:behavior>
+			<munit:execution>
+				<munit:set-event doc:name="Set Input" doc:id="e6b4cebb-8af4-48ce-a7fd-887e0d6912ab">
+					<munit:payload value="#[readUrl('classpath://fetchcustomerFlowtestsuccese\set-event_payload.dwl')]" encoding="UTF-8" />
+					<munit:attributes value="#[readUrl('classpath://fetchcustomerFlowtestsuccese\set-event_attributes.dwl')]" />
+					<munit:variables>
+						<munit:variable key="outboundHeaders" value="#[readUrl('classpath://fetchcustomerFlowtestsuccese\set-event_variable_.dwl')]" />
+					</munit:variables>
+				</munit:set-event>
+				<try doc:name="Try" doc:id="2afcaf7c-7e89-4ae4-95e9-dd2b88de748e">
+					<flow-ref doc:name="Flow-ref to customer-management-main" doc:id="e066535c-528c-4a40-b7d0-7440f3104a00" name="customer-management-main" />
+					<error-handler>
+						<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="960f9489-6906-4346-a74d-01e14a22ba1b">
+							<logger level="INFO" doc:name="Logger" doc:id="5436850d-ef43-41bd-89e9-c498ef188438" message='"continue"' />
+						</on-error-continue>
+					</error-handler>
+				</try>
+			</munit:execution>
+			<munit:validation>
+				<munit-tools:assert-that doc:name="Assert that" doc:id="be2de8db-0840-4cfd-8f02-bc7710acb93e" expression="#[payload.error]" is="#[MunitTools::equalTo(error.description)]" />
+			</munit:validation>
+		</munit:test>
+
+
+</mule>

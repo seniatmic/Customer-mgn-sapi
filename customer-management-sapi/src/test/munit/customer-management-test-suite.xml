@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="customer-management-test-suite.xml" />
+	<munit:test name="customer-management-test-suite-customer-management-error400" doc:id="dcb76264-f73f-48de-8240-769658301b53" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="ef6ca3cf-c524-494a-95d5-88f98a438f48" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="30c8c567-1b22-420f-977d-1eb86cfffaa7" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:BAD_REQUEST" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="bbf727bb-bdad-40c1-9899-b58459894682" >
+				<munit:payload value="#[output application/json --- readUrl('classpath://addcustomerFlowtest1\set-event_payload.dwl')]" />
+			</munit:set-event>
+			<try doc:name="Try" doc:id="9fe03bc5-23e0-4e30-b7b6-00380ce45e9f" >
+				<flow-ref doc:name="Flow-ref to customer-management-main" doc:id="9676be19-9ba9-4b4a-b34d-fdca7d464a7b" name="customer-management-main" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="e06f8b99-f127-460b-80e2-ab2aa446de38" >
+						<logger level="INFO" doc:name="Logger" doc:id="e359018d-a506-472f-af3a-0f3594c2e314" message='"log"'/>
+					</on-error-continue>
+				</error-handler>
+			</try>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="0d7a37fe-840e-4ee7-bb9a-19d7fcc75246" expression="#[payload.error]" is="#[MunitTools::equalTo(error.description)]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="customer-management-test-suite-customer-management-error404" doc:id="85465683-047a-439e-871a-03e647ee1731" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="ba431f06-e5f7-4240-a609-dfd2afbbdf82" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="30c8c567-1b22-420f-977d-1eb86cfffaa7" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:NOT_FOUND" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="48dc015a-8233-47f1-87e8-9e2fe09dcf2f">
+				<munit:payload value="#[output application/json --- readUrl('classpath://addcustomerFlowtest1\set-event_payload.dwl')]" />
+			</munit:set-event>
+			<try doc:name="Try" doc:id="1db2af89-d3ed-483f-a450-2974585914de" >
+				<flow-ref doc:name="Flow-ref to customer-management-main" doc:id="93a8adc6-174e-42ff-9267-aadd62c3c66b" name="customer-management-main" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="f42a9e11-f7c1-4d4e-8690-9b38aa0e4d15" >
+						<logger level="INFO" doc:name="Logger" doc:id="2e289794-9bd1-4824-81e6-3b10dff6ed41" message='"continue"' />
+					</on-error-continue>
+				</error-handler>
+			</try>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="7b645615-10a1-4a2d-a3e6-5730ad81593a" expression="#[payload.error]" is="#[MunitTools::equalTo(error.description)]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="customer-management-test-suite-customer-management-error405" doc:id="1b528e5d-10a3-47cd-bd30-5af25db71935" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="d4a219d7-e5be-465b-8229-f157cc2c45da" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="30c8c567-1b22-420f-977d-1eb86cfffaa7" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:METHOD_NOT_ALLOWED" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="SetEvent" doc:id="9adc10b7-8b2e-407c-9bdf-abde82634159">
+				<munit:payload value="#[output application/json --- readUrl('classpath://addcustomerFlowtest1\set-event_payload.dwl')]" />
+			</munit:set-event>
+			<try doc:name="Try" doc:id="52bdb6cd-1154-45f3-b949-fd6853c492c2" >
+				<flow-ref doc:name="Flow-ref to customer-management-main" doc:id="7e384e79-b2d1-4658-84eb-79fd71095b46" name="customer-management-main" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="0682ccba-a0a8-4c67-bcbc-0093176efd6b" >
+						<logger level="INFO" doc:name="Logger" doc:id="260334d3-9ba5-4d5c-b73d-5f010439a25e" message='"continue"' />
+					</on-error-continue>
+				</error-handler>
+			</try>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="55ee40e4-2320-4c4a-b9d0-6995adb95180" expression="#[payload.error]" is="#[MunitTools::equalTo(error.description)]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="customer-management-test-suite-customer-management-error406" doc:id="8a7466fa-a646-4f8f-8f4b-751c35b6f690" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="13e18ed8-962e-4dcd-bc34-593066c91607" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="30c8c567-1b22-420f-977d-1eb86cfffaa7" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:NOT_ACCEPTABLE" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution>
+			<munit:set-event doc:name="Set Event" doc:id="c46ff8d9-2997-48f6-bf85-940e727f8fb5" >
+				<munit:payload value="#[output application/json --- readUrl('classpath://addcustomerFlowtest1\set-event_payload.dwl')]" />
+			</munit:set-event>
+			<try doc:name="Try" doc:id="9dc30ea3-fc97-4cbd-addc-ddc3c265cad7" >
+				<flow-ref doc:name="Flow-ref to customer-management-main" doc:id="a6f5f400-1f25-443e-b32e-09ab550297be" name="customer-management-main" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="0cf15cc1-722b-44e0-93c7-8a72616a2c0e" >
+						<logger level="INFO" doc:name="Logger" doc:id="3cda27e1-7f7e-4bab-9937-bee89a384c4c" message='"continue"' />
+					</on-error-continue>
+				</error-handler>
+			</try>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="d67b2737-5316-4bb6-b344-f627d8ad1d09" expression="#[payload.error]" is="#[MunitTools::equalTo(error.description)]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="customer-management-test-suite-customer-management-error415" doc:id="704920cf-1458-4d29-86d8-ef0952ccdb0f" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="443ab7b7-61e0-4f2e-b3e4-3c44614b2dc3" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="30c8c567-1b22-420f-977d-1eb86cfffaa7" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:UNSUPPORTED_MEDIA_TYPE" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution>
+			<munit:set-event doc:name="Set Event" doc:id="63a837f3-6ced-4783-b128-1c344dfe739d" >
+				<munit:payload value="#[output application/json --- readUrl('classpath://addcustomerFlowtest1\set-event_payload.dwl')]" />
+			</munit:set-event>
+			<try doc:name="Try" doc:id="bc7ec300-8502-42c6-8759-4dee493741ac" >
+				<flow-ref doc:name="Flow-ref to customer-management-main" doc:id="4ca16654-3d07-4d34-b6f6-ca8076c13639" name="customer-management-main" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="d5c0e8df-0f56-42b8-b14a-a9de8f101d1d" >
+						<logger level="INFO" doc:name="Logger" doc:id="d11328a6-b7df-4fce-a0e3-b962db4e3013" message='"continue"' />
+					</on-error-continue>
+				</error-handler>
+			</try>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="ebdbdd3e-a097-4044-be24-275bf8a8d448" expression="#[payload.error]" is="#[MunitTools::equalTo(error.description)]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="customer-management-test-suite-customer-management-error403" doc:id="28a86a5f-8bfa-4fbf-a495-1507446d882e" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="0b2b1f79-502d-426c-9aa3-8bf805ba235d" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="30c8c567-1b22-420f-977d-1eb86cfffaa7" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="MULE:SERVER_SECURITY" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution>
+			<munit:set-event doc:name="Set Event" doc:id="d552f60a-2320-4934-b638-49c2f7756cf2" >
+				<munit:payload value="#[output application/json --- readUrl('classpath://addcustomerFlowtest1\set-event_payload.dwl')]" />
+			</munit:set-event>
+			<try doc:name="Try" doc:id="c806a165-6674-4d62-b7b0-d7741925514f" >
+				<flow-ref doc:name="Flow-ref to customer-management-main" doc:id="697c9454-fef0-46b3-bce0-40a772f91afd" name="customer-management-main" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="6daab2b4-f183-4d86-9c09-a9291fd1286b" >
+						<logger level="INFO" doc:name="Logger" doc:id="29fbcacb-8e7a-4b99-ab4c-1a936d07c27d" message='"log"' />
+					</on-error-continue>
+				</error-handler>
+			</try>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="199b323d-5976-4042-81c5-c7182e404872" expression="#[payload.error]" is="#[MunitTools::equalTo(error.description)]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="customer-management-test-suite-customer-management-error500" doc:id="1286ca32-fd57-4390-9e68-bb2cddf0a825" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="b8278a61-9cbd-4971-aaa3-b6f4687a1011" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="30c8c567-1b22-420f-977d-1eb86cfffaa7" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="MULE:CLIENT_SECURITY" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution>
+			<munit:set-event doc:name="Set Event" doc:id="5257ba2e-8682-49b4-afa8-068ad3c011dc" >
+				<munit:payload value="#[output application/json --- readUrl('classpath://addcustomerFlowtest1\set-event_payload.dwl')]" />
+			</munit:set-event>
+			<try doc:name="Try" doc:id="2f4ed764-22d7-41f0-9cb3-8a6bca354430" >
+				<flow-ref doc:name="Flow-ref to customer-management-main" doc:id="533163e2-c85b-4125-aaa5-e0855e231a79" name="customer-management-main" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="4560e78a-17b4-428f-9eba-b5b8fa0c5b8c" >
+						<logger level="INFO" doc:name="Logger" doc:id="d1a4fbf1-5fef-4cb9-9512-b554cdaca0f3" message='"continue"' />
+					</on-error-continue>
+				</error-handler>
+			</try>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="d39173df-9fd3-4cd8-b797-3d4bea0ba9a6" expression="#[payload.error]" is="#[MunitTools::equalTo(error.description)]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="customer-management-test-suite-customer-management-error504" doc:id="53e90a52-2ed3-496a-84ec-fb290134120b" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="a1b16f57-7ff5-43db-8ff4-6f8e1a0f72b6" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="30c8c567-1b22-420f-977d-1eb86cfffaa7" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="MULE:CONNECTIVITY" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution>
+			<munit:set-event doc:name="Set Event" doc:id="f61daf3e-cac7-4a64-82f7-77005310f0b8" >
+				<munit:payload value="#[output application/json --- readUrl('classpath://addcustomerFlowtest1\set-event_payload.dwl')]" />
+			</munit:set-event>
+			<try doc:name="Try" doc:id="86615bbb-3e80-4dd4-a573-dd33426df38e" >
+				<flow-ref doc:name="Flow-ref to customer-management-main" doc:id="c4489168-8620-4a73-9c32-87bf01cf56c4" name="customer-management-main" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="7aafd270-3215-43dc-b133-f92bf41c114c" >
+						<logger level="INFO" doc:name="Logger" doc:id="3e59d0fd-2195-4a47-83f3-c3dfd200d576" message='"continue"' />
+					</on-error-continue>
+				</error-handler>
+			</try>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="8acec5ef-a385-480b-940c-e680df7a5068" expression="#[payload.error]" is="#[MunitTools::equalTo(error.description)]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="customer-management-test-suite-customer-management-error501" doc:id="75f4c98d-4bd1-4a87-bdb1-edea1e8d605c" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="541fbebf-17f4-4bf6-b9ce-e247ab9d956c" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="30c8c567-1b22-420f-977d-1eb86cfffaa7" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:NOT_IMPLEMENTED" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution>
+			<munit:set-event doc:name="Set Event" doc:id="d945c523-53ea-4f88-9329-51bc44774ad7">
+				<munit:payload value="#[output application/json --- readUrl('classpath://addcustomerFlowtest1\set-event_payload.dwl')]" />
+			</munit:set-event>
+			<try doc:name="Try" doc:id="f28013cd-54ba-42c4-97b0-a428f4667f2c" >
+				<flow-ref doc:name="Flow-ref to customer-management-main" doc:id="76babf76-4c2a-4859-ada7-bbc79835fc05" name="customer-management-main" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="b48d260b-d1a9-4b9b-bfdd-a0f55ea80bef" >
+						<logger level="INFO" doc:name="Logger" doc:id="8c72793b-277b-46f8-97bc-3d8888640466" message='"continue"' />
+					</on-error-continue>
+				</error-handler>
+			</try>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="f1a53821-937d-4967-bdd1-5e49d3cbc517" expression="#[payload.error]" is="#[MunitTools::equalTo(error.description)]" />
+		</munit:validation>
+	</munit:test>
+
+
+</mule>
