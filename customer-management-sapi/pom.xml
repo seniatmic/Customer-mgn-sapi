@@ -76,15 +76,8 @@
 				</configuration>
 			</plugin>
 		</plugins>
-		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-				<includes>
-				<include>**/Customer-PRD.yaml</include>
-				<include>**/Customer-QA.yaml</include>
-				</includes>
-			</resource>
-		</resources>
+		
+		
 	</build>
 
 	<dependencies>
